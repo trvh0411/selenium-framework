@@ -9,6 +9,20 @@ on:
 jobs:
  run-tests:
  runs-on: ubuntu-latest
+ strategy:
+ matrix:
+ browser: [chrome, firefox] # Tạo 2 job chạy song song
+ fail-fast: false # Chrome fail không dừng Firefox
+ steps:
+ - name: Chạy test (${{ matrix.browser }})
+ run: mvn clean test -Dbrowser=${{ matrix.browser }} -
+DsuiteXmlFile=testng-smoke.xml
+ - name: Lưu kết quả
+ if: always()
+ uses: actions/upload-artifact@v4
+ with:
+ name: test-results-${{ matrix.browser }} # 2 artifact riêng biệt
+ path: target/surefire-reports/
  steps:
  - name: Checkout code
  uses: actions/checkout@v4
